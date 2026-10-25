@@ -42,7 +42,7 @@ const esc = s => String(s || '').replace(/[&<>"']/g, c => ({
 
 function calc() {
   const area = val('area');
-  const thickness = val('thickness);
+const thickness = val('thickness');
   const price = val('price');
   const vat = val('vat');
   const p = profiles[$('foam').value];
