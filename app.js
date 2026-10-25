@@ -115,15 +115,38 @@ body {
 .head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 14px;
+  justify-content: flex-start;
+  gap: 18px;
   border-bottom: 3px solid #287747;
-  padding-bottom: 8px;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
 }
-.logo { max-width: 135px; max-height: 72px; object-fit: contain; }
-.brand { font-size: 23pt; color: #287747; font-weight: bold; }
-.tag { font-size: 8pt; font-weight: bold; letter-spacing: .3px; }
-.company { text-align: right; font-size: 8.5pt; }
+.logo {
+  display: block;
+  width: 105px;
+  height: 105px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.brand-block {
+  min-width: 0;
+}
+.brand {
+  font-size: 25pt;
+  color: #287747;
+  font-weight: bold;
+}
+.tag {
+  font-size: 8pt;
+  font-weight: bold;
+  letter-spacing: .3px;
+  margin: 3px 0 8px;
+}
+.company {
+  text-align: left;
+  font-size: 8.5pt;
+  line-height: 1.45;
+}
 .title { font-size: 19pt; margin: 12px 0 3px; }
 .sub { margin: 0 0 8px; }
 p { margin: 7px 0; }
@@ -153,17 +176,16 @@ li { margin: 3px 0; }
 </head>
 <body>
 <div class="head">
-  <div>
-    <img class="logo" src="${logo}" alt="Logo BIRTECH"
-      onerror="this.style.display='none'">
+  <img class="logo" src="${logo}" alt="Logo BIRTECH"
+    onerror="this.style.display='none'">
+  <div class="brand-block">
     <div class="brand">BIRTECH</div>
     <div class="tag">IZOLACJE NATRYSKOWE PIANĄ PUR</div>
-  </div>
-  <div class="company">
-    <b>BIRTECH — Jakub Bir</b><br>
-    ul. Parkowa 12/12, 83-300 Kartuzy<br>
-    Tel. 536 899 440<br>
-    NIP 589-200-38-60
+    <div class="company">
+      <b>Jakub Bir · Kartuzy</b><br>
+      Tel. 536 899 440<br>
+      NIP 589-200-38-60
+    </div>
   </div>
 </div>
 
@@ -179,8 +201,8 @@ li { margin: 3px 0; }
   <h3>Dane klienta i inwestycji</h3>
   <b>Klient:</b> ${esc(o.customer) || '........................................'}<br>
   <b>Adres inwestycji:</b> ${esc(o.address) || '........................................'}<br>
-  <b>Telefon:</b> ${esc(o.phone)} &nbsp;
-  <b>E-mail:</b> ${esc(o.email)}<br>
+ <b>Telefon:</b> ${esc(o.phone)}<br>
+<b>E-mail:</b> ${esc(o.email)}<br>
   ${o.clientNip ? '<b>NIP:</b> ' + esc(o.clientNip) : ''}
 </div>
 
