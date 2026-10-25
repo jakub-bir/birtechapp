@@ -7,10 +7,25 @@
 <title>BIRTECH — Kalkulator PUR</title>
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="style.css">
+<style>
+.brand-logo {
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+.offer-logo {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+}
+</style>
 </head>
 <body>
 <header>
-  <b class="mark">B</b>
+  <img class="brand-logo"
+       src="WhatsApp%20Image%202026-10-25%20at%2019.42.20.jpeg"
+       alt="Logo BIRTECH">
   <div>
     <b>BIRTECH</b>
     <small>IZOLACJE NATRYSKOWE PIANĄ PUR</small>
@@ -136,32 +151,24 @@
       </div>
     </div>
 
-    <p class="fine">
-      Koszt materiału jest proporcjonalny do zużycia. Liczba zestawów
-      do zakupu jest zaokrąglana w górę. Rzeczywista wydajność może
-      zależeć od warunków natrysku.
-    </p>
-
+    <p class="fine">Koszt materiału jest szacowany proporcjonalnie do zużycia. Liczba zestawów do zakupu jest zaokrąglana w górę.</p>
     <button class="primary" type="submit">Oblicz i zapisz zlecenie</button>
   </form>
 
   <div class="offer">
     <small>PODGLĄD OFERTY</small>
     <h3>BIRTECH — Izolacje natryskowe pianą PUR</h3>
+    <img class="offer-logo"
+         src="WhatsApp%20Image%202026-10-25%20at%2019.42.20.jpeg"
+         alt="Logo BIRTECH">
     <p id="summary">150 m² · piana otwartokomórkowa · 25 cm</p>
     <strong id="offerPrice">0 zł brutto</strong>
-
     <div class="share-actions">
-      <button id="print" type="button" class="primary">Drukuj / PDF</button>
+      <button id="print" type="button" class="primary">Zapisz / udostępnij PDF</button>
       <button id="emailSend" type="button">E-mail</button>
       <button id="whatsappSend" type="button">WhatsApp</button>
       <button id="smsSend" type="button">SMS</button>
     </div>
-
-    <p class="fine">
-      Wiadomość otworzy się w wybranej aplikacji. PDF dołącz ręcznie,
-      jeśli jest potrzebny.
-    </p>
   </div>
 </section>
 
@@ -172,7 +179,7 @@
     <button id="export" type="button">Eksportuj kopię</button>
   </div>
   <div id="list"></div>
-  <p class="fine">Zapis działa w tej przeglądarce. Eksportuj kopię zapasową.</p>
+  <p class="fine">Zlecenia są przechowywane w tej przeglądarce. Regularnie eksportuj kopię zapasową.</p>
 </section>
 </main>
 
