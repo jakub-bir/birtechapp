@@ -1,1 +1,182 @@
-<!doctype html><html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101412"><title>BIRTECH — Kalkulator PUR</title><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="style.css"></head><body><header><b class="mark">B</b><div><b>BIRTECH</b><small>IZOLACJE NATRYSKOWE PUR</small></div></header><main><section class="hero"><small>PANEL FIRMOWY</small><h1>Wyceny i zlecenia<br><em>w jednym miejscu.</em></h1><p>Pierwsza wersja aplikacji BIRTECH.</p><div class="notice">Wersja startowa zapisuje dane w tej przeglądarce na tym urządzeniu. Nie synchronizuje ich jeszcze z innymi urządzeniami.</div></section><nav><button class="active" data-tab="calc">Kalkulator</button><button data-tab="orders">Zlecenia <span id="count">0</span></button></nav><section id="calc" class="panel"><small>01 / KALKULATOR</small><h2>Nowa wycena</h2><form id="form"><div class="grid"><label>Klient<input id="customer" placeholder="Imię i nazwisko / firma"></label><label>Telefon<input id="phone" placeholder="Numer telefonu"></label></div><label>Adres / miejscowość<input id="address" placeholder="Np. Kartuzy"></label><div class="grid"><label>Rodzaj piany<select id="foam"><option>Otwartokomórkowa</option><option>Zamkniętokomórkowa</option></select></label><label>Zakres prac<select id="scope"><option>Poddasze</option><option>Dach</option><option>Strop</option><option>Ściany</option><option>Garaż</option><option>Hala / obiekt</option><option>Inne</option></select></label></div><div class="grid three"><label>Powierzchnia m²<input id="area" type="number" min="0" value="150"></label><label>Grubość cm<input id="thickness" type="number" min="0" value="25"></label><label>Cena netto/m² zł<input id="price" type="number" min="0" value="100"></label></div><div class="grid"><label>VAT<select id="vat"><option value="8">8%</option><option value="23">23%</option><option value="0">0%</option></select></label><label>Koszt materiału zł<input id="material" type="number" min="0" value="8300"></label><label>Pracownik zł<input id="labor" type="number" min="0" value="500"></label><label>Paliwo i dojazd zł<input id="fuel" type="number" min="0" value="250"></label><label>Pozostałe koszty zł<input id="other" type="number" min="0" value="0"></label></div><div class="results"><div><small>Wartość netto</small><strong id="net">15 000 zł</strong></div><div><small>Wartość brutto</small><strong id="gross">16 200 zł</strong></div><div><small>Szacowany koszt</small><strong id="cost">9 050 zł</strong></div><div class="green"><small>Szacowany zysk przed podatkami</small><strong id="profit">5 950 zł</strong><small id="margin">Marża 39,7%</small></div></div><p class="fine">Szacunek nie obejmuje automatycznie ryczałtu, składek, amortyzacji ani wszystkich kosztów firmy. Wpisz koszt materiału przypadający na dane zlecenie.</p><button class="primary" type="submit">Oblicz i zapisz zlecenie</button></form><div class="offer"><small>PODGLĄD OFERTY</small><h3>BIRTECH — oferta na izolację pianą PUR</h3><p id="summary">150 m² · otwartokomórkowa · 25 cm</p><strong id="offerPrice">16 200 zł brutto</strong><button id="print" type="button">Drukuj / zapisz jako PDF</button></div></section><section id="orders" class="panel hidden"><small>02 / HISTORIA</small><div class="heading"><h2>Zapisane zlecenia</h2><button id="export">Eksportuj kopię</button></div><div id="list"></div><p class="fine">Zapis lokalny działa tylko w tej przeglądarce. Eksportuj kopię zapasową. Synchronizację online dodamy w kolejnym etapie.</p></section></main><footer>BIRTECH • Wersja startowa</footer><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101412">
+<title>BIRTECH — Kalkulator PUR</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <b class="mark">B</b>
+  <div>
+    <b>BIRTECH</b>
+    <small>IZOLACJE NATRYSKOWE PIANĄ PUR</small>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <small>PANEL FIRMOWY</small>
+  <h1>Wyceny i zlecenia<br><em>w jednym miejscu.</em></h1>
+  <p>Kalkulator kosztów, zużycia materiału i ofert.</p>
+  <div class="notice">Dane zleceń są zapisywane lokalnie w tej przeglądarce.</div>
+</section>
+
+<nav>
+  <button class="active" data-tab="calc">Kalkulator</button>
+  <button data-tab="orders">Zlecenia <span id="count">0</span></button>
+</nav>
+
+<section id="calc" class="panel">
+  <small>01 / KALKULATOR</small>
+  <h2>Nowa wycena</h2>
+
+  <form id="form">
+    <h3>Dane klienta</h3>
+    <div class="grid">
+      <label>Imię i nazwisko / firma
+        <input id="customer" placeholder="Dane klienta">
+      </label>
+      <label>Telefon
+        <input id="phone" type="tel" placeholder="Numer telefonu">
+      </label>
+      <label>Adres inwestycji
+        <input id="address" placeholder="Adres inwestycji">
+      </label>
+      <label>E-mail klienta
+        <input id="email" type="email" placeholder="adres@email.pl">
+      </label>
+    </div>
+
+    <label>NIP klienta (opcjonalnie)
+      <input id="clientNip" placeholder="NIP">
+    </label>
+
+    <h3>Parametry usługi</h3>
+    <div class="grid">
+      <label>Rodzaj piany
+        <select id="foam">
+          <option value="open">Otwartokomórkowa — Omega Pur OK-12E</option>
+          <option value="closed">Zamkniętokomórkowa — Omega Pur ZK-35</option>
+        </select>
+      </label>
+      <label>Zakres prac
+        <select id="scope">
+          <option>Poddasze</option>
+          <option>Dach</option>
+          <option>Strop</option>
+          <option>Ściany</option>
+          <option>Garaż</option>
+          <option>Fundament</option>
+          <option>Hala / obiekt</option>
+          <option>Inne</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="grid three">
+      <label>Powierzchnia m²
+        <input id="area" type="number" min="0" step=".1" value="150">
+      </label>
+      <label>Grubość cm
+        <input id="thickness" type="number" min="0" step=".5" value="25">
+      </label>
+      <label>Cena netto/m² zł
+        <input id="price" type="number" min="0" value="100">
+      </label>
+    </div>
+
+    <h3>Koszty wewnętrzne</h3>
+    <div class="grid">
+      <label>VAT
+        <select id="vat">
+          <option value="8">8%</option>
+          <option value="23">23%</option>
+          <option value="0">0%</option>
+        </select>
+      </label>
+      <label>Koszt materiału — automatycznie
+        <input id="material" type="number" readonly>
+      </label>
+      <label>Pracownik zł
+        <input id="labor" type="number" min="0" value="500">
+      </label>
+      <label>Paliwo i dojazd zł
+        <input id="fuel" type="number" min="0" value="250">
+      </label>
+      <label>Pozostałe koszty zł
+        <input id="other" type="number" min="0" value="0">
+      </label>
+    </div>
+
+    <div class="material-card">
+      <div>
+        <small>Zużycie zestawów</small>
+        <strong id="setsUsed">—</strong>
+        <span id="volumeUsed">—</span>
+      </div>
+      <div>
+        <small>Pełne zestawy do zakupu</small>
+        <strong id="setsBuy">—</strong>
+        <span id="materialProfile">—</span>
+      </div>
+    </div>
+
+    <div class="results">
+      <div><small>Wartość netto</small><strong id="net">0 zł</strong></div>
+      <div><small>Wartość brutto</small><strong id="gross">0 zł</strong></div>
+      <div><small>Szacowany koszt</small><strong id="cost">0 zł</strong></div>
+      <div class="green">
+        <small>Zysk przed podatkami</small>
+        <strong id="profit">0 zł</strong>
+        <small id="margin">Marża: 0%</small>
+      </div>
+    </div>
+
+    <p class="fine">
+      Koszt materiału jest proporcjonalny do zużycia. Liczba zestawów
+      do zakupu jest zaokrąglana w górę. Rzeczywista wydajność może
+      zależeć od warunków natrysku.
+    </p>
+
+    <button class="primary" type="submit">Oblicz i zapisz zlecenie</button>
+  </form>
+
+  <div class="offer">
+    <small>PODGLĄD OFERTY</small>
+    <h3>BIRTECH — Izolacje natryskowe pianą PUR</h3>
+    <p id="summary">150 m² · piana otwartokomórkowa · 25 cm</p>
+    <strong id="offerPrice">0 zł brutto</strong>
+
+    <div class="share-actions">
+      <button id="print" type="button" class="primary">Drukuj / PDF</button>
+      <button id="emailSend" type="button">E-mail</button>
+      <button id="whatsappSend" type="button">WhatsApp</button>
+      <button id="smsSend" type="button">SMS</button>
+    </div>
+
+    <p class="fine">
+      Wiadomość otworzy się w wybranej aplikacji. PDF dołącz ręcznie,
+      jeśli jest potrzebny.
+    </p>
+  </div>
+</section>
+
+<section id="orders" class="panel hidden">
+  <small>02 / HISTORIA</small>
+  <div class="heading">
+    <h2>Zapisane zlecenia</h2>
+    <button id="export" type="button">Eksportuj kopię</button>
+  </div>
+  <div id="list"></div>
+  <p class="fine">Zapis działa w tej przeglądarce. Eksportuj kopię zapasową.</p>
+</section>
+</main>
+
+<footer>BIRTECH — Jakub Bir · Izolacje natryskowe pianą PUR · Kartuzy</footer>
+<script src="app.js"></script>
+</body>
+</html>
