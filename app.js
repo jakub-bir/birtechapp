@@ -1,15 +1,269 @@
-const $=id=>document.getElementById(id), money=n=>(Number(n)||0).toLocaleString('pl-PL',{style:'currency',currency:'PLN'}), val=id=>Math.max(0,Number($(id).value)||0);
-const profiles={open:{label:'Otwartokomórkowa',product:'Omega Pur OK-12E',price:8300,m3:37.5,basis:'150 m² przy 25 cm'},closed:{label:'Zamkniętokomórkowa',product:'Omega Pur ZK-35',price:9400,m3:10,basis:'200 m² przy 5 cm'}};
-const load=()=>{try{return JSON.parse(localStorage.getItem('birtech_orders')||'[]')}catch{return[]}},save=a=>localStorage.setItem('birtech_orders',JSON.stringify(a)),esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function calc(){let area=val('area'),thickness=val('thickness'),price=val('price'),vat=val('vat'),p=profiles[$('foam').value],volume=area*thickness/100,sets=volume/p.m3,material=sets*p.price,net=area*price,vatAmount=net*vat/100,gross=net+vatAmount,cost=material+val('labor')+val('fuel')+val('other'),profit=net-cost,margin=net?profit/net*100:0; $('material').value=material.toFixed(2);$('setsUsed').textContent=sets.toLocaleString('pl-PL',{maximumFractionDigits:2})+' zest.';$('setsBuy').textContent=Math.ceil(sets)+' zest.';$('volumeUsed').textContent=volume.toLocaleString('pl-PL',{maximumFractionDigits:2})+' m³ · '+money(material);$('materialProfile').textContent=money(p.price)+' / zestaw · '+p.basis;$('net').textContent=money(net);$('gross').textContent=money(gross);$('cost').textContent=money(cost);$('profit').textContent=money(profit);$('margin').textContent='Marża: '+margin.toLocaleString('pl-PL',{maximumFractionDigits:1})+'%';$('summary').textContent=`${area} m² · ${p.label.toLowerCase()} · ${thickness} cm · ${$('scope').value}`;$('offerPrice').textContent=money(gross)+' brutto';return {area,thickness,price,vat,vatAmount,net,gross,materialCost:material,cost,profit,margin,volume,sets,setsBuy:Math.ceil(sets),foam:p.label,product:p.product,scope:$('scope').value,customer:$('customer').value,phone:$('phone').value,address:$('address').value,email:$('email').value,clientNip:$('clientNip').value};}
-function offer(o){let d=new Date(),expiry=new Date(d);expiry.setDate(d.getDate()+14);let date=x=>x.toLocaleDateString('pl-PL');return `<!doctype html><html lang="pl"><meta charset="utf-8"><title>Oferta BIRTECH</title><style>@page{size:A4;margin:14mm}body{font:11pt Arial;color:#222;line-height:1.4}.head{display:flex;justify-content:space-between;border-bottom:3px solid #287747;padding-bottom:12px}.brand{font-size:27pt;color:#287747;font-weight:bold}.company{text-align:right;font-size:9pt}.tag{font-weight:bold;letter-spacing:.5px}.title{font-size:22pt;margin:18px 0 4px}.client{border:1px solid #bbb;padding:12px;margin:16px 0}.section{margin:17px 0}.section h3{color:#287747;margin-bottom:6px}table{width:100%;border-collapse:collapse;margin:8px 0}td,th{padding:8px;border-bottom:1px solid #ddd;text-align:left}.right{text-align:right}.total{width:60%;margin-left:auto}.total tr:last-child{font-size:16pt;font-weight:bold;border-top:2px solid #287747}.signs{display:flex;gap:45px;margin-top:35px}.sign{width:50%;border-top:1px solid #777;padding-top:6px;font-size:9pt}.foot{border-top:1px solid #ddd;margin-top:22px;padding-top:8px;font-size:9pt}</style><body><div class="head"><div><div class="brand">BIRTECH</div><div class="tag">IZOLACJE NATRYSKOWE PIANĄ PUR</div></div><div class="company"><b>BIRTECH — Jakub Bir</b><br>ul. Parkowa 12/12, 83-300 Kartuzy<br>Tel. 536 899 440<br>NIP 589-200-38-60</div></div><h1 class="title">Oferta na wykonanie izolacji</h1><div>Izolacja natryskowa pianą poliuretanową PUR</div><p><b>Data wystawienia:</b> ${date(d)} &nbsp; <b>Oferta ważna do:</b> ${date(expiry)}<br><b>Zakres prac:</b> ${esc(o.scope)}</p><div class="client"><h3>Dane klienta i inwestycji</h3><b>Klient:</b> ${esc(o.customer)||'........................................................'}<br><b>Adres inwestycji:</b> ${esc(o.address)||'........................................................'}<br><b>Telefon:</b> ${esc(o.phone)} &nbsp; <b>E-mail:</b> ${esc(o.email)}<br>${o.clientNip?'<b>NIP:</b> '+esc(o.clientNip):''}</div><div class="section"><h3>1. Przedmiot oferty</h3><table><tr><td>Usługa / produkt</td><td><b>Izolacja natryskowa pianą PUR</b><br>${esc(o.product)}</td></tr><tr><td>Rodzaj piany</td><td>${esc(o.foam)}</td></tr><tr><td>Grubość</td><td>${o.thickness} cm</td></tr><tr><td>Powierzchnia</td><td>${o.area} m²</td></tr></table></div><div class="section"><h3>2. Zakres usługi — cena obejmuje</h3><ul><li>Wykonanie izolacji natryskowej pianą PUR na uzgodnionej powierzchni i grubości.</li><li>Zastosowanie uzgodnionego produktu Omega Pur.</li><li>Zabezpieczenie okien, ścian, podłóg i innych powierzchni narażonych na zabrudzenie podczas natrysku.</li><li>Przygotowanie stanowiska roboczego w zakresie niezbędnym do wykonania natrysku.</li><li>Posprzątanie stanowiska pracy po zakończeniu wykonywania izolacji.</li></ul></div><div class="section"><h3>3. Zestawienie ceny</h3><table><tr><td>Powierzchnia</td><td class="right">${o.area} m²</td></tr><tr><td>Cena jednostkowa netto</td><td class="right">${money(o.price)} / m²</td></tr><tr><td>Wartość netto</td><td class="right">${money(o.net)}</td></tr><tr><td>VAT (${o.vat}%)</td><td class="right">${money(o.vatAmount)}</td></tr></table><table class="total"><tr><td>Do zapłaty brutto</td><td class="right">${money(o.gross)}</td></tr></table></div><p>Termin realizacji zostanie uzgodniony z klientem. Oferta jest ważna do wskazanej powyżej daty.</p><div class="signs"><div class="sign">Podpis wykonawcy</div><div class="sign">Akceptacja oferty przez klienta</div></div><div class="foot">BIRTECH — Jakub Bir · Izolacje natryskowe pianą PUR · Kartuzy · 536 899 440</div><script>window.onload=()=>setTimeout(()=>window.print(),300)</script></body></html>`}
-function printOffer(){let w=window.open('','_blank');if(!w){alert('Zezwól na wyskakujące okna w przeglądarce.');return}w.document.write(offer(calc()));w.document.close()}
-function msg(o){return `Dzień dobry${o.customer?' '+o.customer:''}, przesyłam ofertę BIRTECH na izolację pianą PUR. Zakres: ${o.scope}. Produkt: ${o.product}. Powierzchnia: ${o.area} m², grubość: ${o.thickness} cm. Cena brutto: ${money(o.gross)}. Oferta ważna 14 dni. BIRTECH — Izolacje natryskowe pianą PUR, tel. 536 899 440.`}
-function share(type){let o=calc(),t=msg(o),phone=o.phone.replace(/[^\d+]/g,'');if(type==='email')location.href=`mailto:${encodeURIComponent(o.email)}?subject=${encodeURIComponent('Oferta BIRTECH — izolacja PUR')}&body=${encodeURIComponent(t+' Dołącz PDF, jeśli chcesz wysłać pełną ofertę.')}`;if(type==='whatsapp')location.href=`https://wa.me/${phone.replace(/\D/g,'')}?text=${encodeURIComponent(t)}`;if(type==='sms')location.href=`sms:${phone}?&body=${encodeURIComponent(t)}`}
-function render(){let a=load();$('count').textContent=a.length;$('list').innerHTML=a.length?a.map(o=>`<article class="order"><button class="delete" data-id="${o.id}">Usuń</button><b>${esc(o.customer||'Klient bez nazwy')} · ${money(o.gross)} brutto</b><p>${esc(o.address||'Brak adresu')} · ${o.area} m² · ${o.thickness} cm</p><p>${esc(o.product||o.foam)} · ${esc(o.scope)}</p><p>Materiał ${money(o.materialCost??0)} · szacowany zysk ${money(o.profit)}</p></article>`).join(''):'<p class="fine">Brak zapisanych zleceń.</p>';$('list').querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>{if(confirm('Usunąć zlecenie?')){save(load().filter(o=>o.id!==Number(b.dataset.id)));render()}})}
-['area','price','vat','material','labor','fuel','other','foam','thickness','scope','customer','phone','address','email','clientNip'].forEach(id=>$(id).addEventListener('input',calc));
-document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));$('calc').classList.toggle('hidden',b.dataset.tab!=='calc');$('orders').classList.toggle('hidden',b.dataset.tab!=='orders')});
-$('form').onsubmit=e=>{e.preventDefault();let o={id:Date.now(),date:new Date().toISOString(),...calc()};save([o,...load()]);render();alert('Zlecenie zapisane.')};
-$('print').onclick=printOffer;$('emailSend').onclick=()=>share('email');$('whatsappSend').onclick=()=>share('whatsapp');$('smsSend').onclick=()=>share('sms');
-$('export').onclick=()=>{let u=URL.createObjectURL(new Blob([JSON.stringify(load(),null,2)],{type:'application/json'})),a=document.createElement('a');a.href=u;a.download='birtech-zlecenia.json';a.click();URL.revokeObjectURL(u)};
-calc();render();
+const $ = id => document.getElementById(id);
+const money = n => (Number(n) || 0).toLocaleString("pl-PL", {
+  style: "currency", currency: "PLN"
+});
+const profiles = {
+  open: {
+    label: "Otwartokomórkowa",
+    product: "Omega Pur OK-12E",
+    price: 8300,
+    m3: 37.5
+  },
+  closed: {
+    label: "Zamkniętokomórkowa",
+    product: "Omega Pur ZK-35",
+    price: 9400,
+    m3: 10
+  }
+};
+const STORE = "birtech_orders";
+let current = {};
+let currentId = null;
+
+function load() {
+  try {
+    const data = JSON.parse(localStorage.getItem(STORE) || "[]");
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+function save(data) {
+  localStorage.setItem(STORE, JSON.stringify(data));
+}
+function val(id) {
+  return $(id)?.value ?? "";
+}
+function num(id) {
+  return Math.max(0, Number(val(id)) || 0);
+}
+function datePL(date = new Date()) {
+  return date.toLocaleDateString("pl-PL");
+}
+function profile() {
+  return profiles[val("foam")] || profiles.open;
+}
+function calculate() {
+  const p = profile();
+  const area = num("area");
+  const thickness = num("thickness");
+  const price = num("price");
+  const volume = area * thickness / 100;
+  const sets = p.m3 ? volume / p.m3 : 0;
+  const setsBuy = Math.ceil(sets);
+  const materialCost = sets * p.price;
+  const net = area * price;
+  const vat = num("vat");
+  const vatAmount = net * vat / 100;
+  const gross = net + vatAmount;
+  const cost = materialCost + num("labor") + num("fuel") + num("other");
+  const profit = net - cost;
+  const margin = net ? profit / net * 100 : 0;
+
+  current = {
+    id: currentId || Date.now(),
+    date: new Date().toISOString(),
+    customer: val("customer").trim(),
+    phone: val("phone").trim(),
+    address: val("address").trim(),
+    email: val("email").trim(),
+    clientNip: val("clientNip").trim(),
+    area, thickness, price, vat, vatAmount, net, gross,
+    materialCost, cost, profit, margin, volume, sets, setsBuy,
+    foam: p.label, product: p.product,
+    scope: val("scope") || "Poddasze"
+  };
+
+  $("material").value = materialCost.toFixed(2);
+  $("setsUsed").textContent = sets.toFixed(2);
+  $("setsBuy").textContent = setsBuy;
+  $("volumeUsed").textContent = `Objętość: ${volume.toFixed(2)} m³`;
+  $("materialProfile").textContent =
+    `${p.product} · zestaw ${money(p.price)}`;
+  $("net").textContent = money(net);
+  $("gross").textContent = money(gross);
+  $("cost").textContent = money(cost);
+  $("profit").textContent = money(profit);
+  $("margin").textContent = `Marża od netto: ${margin.toFixed(1)}%`;
+  $("summary").textContent =
+    `${area} m² · ${p.label} · ${p.product} · ${thickness} cm`;
+  $("offerPrice").textContent = `${money(gross)} brutto`;
+  return current;
+}
+function saveOrder() {
+  const order = calculate();
+  const all = load();
+  const index = all.findIndex(item => item.id === order.id);
+  if (index >= 0) all[index] = order;
+  else all.unshift(order);
+  save(all);
+  currentId = order.id;
+  renderOrders();
+  alert("Zlecenie zapisane w tej przeglądarce.");
+}
+function renderOrders() {
+  const all = load();
+  $("count").textContent = all.length;
+  $("list").innerHTML = "";
+  if (!all.length) {
+    $("list").textContent = "Brak zapisanych zleceń.";
+    return;
+  }
+  all.forEach(order => {
+    const card = document.createElement("article");
+    card.className = "order-card";
+    const title = document.createElement("h3");
+    title.textContent = order.customer || "Klient bez nazwy";
+    const info = document.createElement("p");
+    info.textContent =
+      `${datePL(new Date(order.date))} · ${order.area} m² · ${order.thickness} cm · ${money(order.gross)}`;
+    const loadButton = document.createElement("button");
+    loadButton.textContent = "Otwórz";
+    loadButton.type = "button";
+    loadButton.onclick = () => {
+      currentId = order.id;
+      [
+        "customer", "phone", "address", "email", "clientNip",
+        "area", "thickness", "price", "vat", "labor", "fuel", "other"
+      ].forEach(id => {
+        if ($(id) && order[id] !== undefined) $(id).value = order[id];
+      });
+      $("foam").value = order.product === profiles.closed.product ? "closed" : "open";
+      $("scope").value = order.scope || "Poddasze";
+      calculate();
+      document.querySelector('[data-tab="calc"]').click();
+    };
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Usuń";
+    deleteButton.type = "button";
+    deleteButton.onclick = () => {
+      if (!confirm("Usunąć to zlecenie?")) return;
+      save(load().filter(item => item.id !== order.id));
+      renderOrders();
+    };
+    card.append(title, info, loadButton, deleteButton);
+    $("list").append(card);
+  });
+}
+function offerHTML(order) {
+  const expiry = new Date();
+  expiry.setDate(expiry.getDate() + 14);
+  const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+  const logo = new URL(
+    "WhatsApp%20Image%202026-10-25%20at%2019.42.20.jpeg",
+    location.href
+  ).href;
+  return `<!doctype html>
+<html lang="pl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Oferta BIRTECH</title>
+<style>
+@page{size:A4;margin:17mm}
+body{font:14px Arial,sans-serif;color:#202420;line-height:1.5}
+header{display:flex;align-items:center;gap:18px;border-bottom:4px solid #39d414;padding-bottom:14px}
+header img{width:105px;height:105px;object-fit:contain}
+h1{font-size:25px;margin:0;color:#151515}
+.green{color:#27a80c;font-weight:bold}
+.meta{display:flex;justify-content:space-between;margin:22px 0}
+section{margin:22px 0}
+table{width:100%;border-collapse:collapse}
+td,th{border-bottom:1px solid #ddd;padding:9px;text-align:left}
+th{background:#f1f5ef}
+.total{margin-left:auto;width:280px}
+.total td:last-child{text-align:right}
+.grand{font-size:20px;font-weight:bold;color:#198c09}
+footer{margin-top:35px;border-top:1px solid #ccc;padding-top:12px;font-size:11px;color:#555}
+@media print{button{display:none}}
+</style></head><body>
+<header><img src="${logo}" alt="Logo BIRTECH">
+<div><h1>BIRTECH</h1><div class="green">IZOLACJE NATRYSKOWE PIANĄ PUR</div>
+<div>Jakub Bir · Kartuzy</div><div>Tel. 536 899 440</div>
+<div>NIP 589-200-38-60</div></div></header>
+<div class="meta"><div><b>OFERTA NA IZOLACJĘ PUR</b><br>Data: ${datePL()}<br>Ważna do: ${datePL(expiry)}</div>
+<div><b>Dla:</b><br>${esc(order.customer || "................................")}<br>
+${esc(order.address)}<br>${esc(order.phone)}</div></div>
+<section><h2>Zakres oferty</h2>
+<p>Usługa: izolacja natryskowa pianą PUR — ${esc(order.scope)}.</p>
+<p>Produkt: <b>${esc(order.product)}</b> (${esc(order.foam)}).</p>
+<p>Powierzchnia: <b>${order.area} m²</b><br>Grubość: <b>${order.thickness} cm</b></p>
+</section>
+<section><h2>Wycena</h2>
+<table><thead><tr><th>Usługa</th><th>Powierzchnia</th><th>Cena netto/m²</th><th>Netto</th></tr></thead>
+<tbody><tr><td>Izolacja pianą PUR</td><td>${order.area} m²</td>
+<td>${money(order.price)}</td><td>${money(order.net)}</td></tr></tbody></table>
+<table class="total"><tr><td>Netto</td><td>${money(order.net)}</td></tr>
+<tr><td>VAT ${order.vat}%</td><td>${money(order.vatAmount)}</td></tr>
+<tr class="grand"><td>Brutto</td><td>${money(order.gross)}</td></tr></table>
+</section>
+<section><h2>Cena obejmuje</h2>
+<ul><li>Natrysk piany PUR w uzgodnionym zakresie.</li>
+<li>Zabezpieczenie okien, ścian, podłóg i innych powierzchni narażonych na zabrudzenie natryskiem.</li>
+<li>Przygotowanie miejsca pracy do wykonania natrysku.</li>
+<li>Uporządkowanie miejsca pracy po zakończeniu usługi.</li></ul></section>
+<section><p>Dziękujemy za zainteresowanie ofertą BIRTECH.</p>
+<p>Akceptacja oferty: ........................................</p></section>
+<footer>BIRTECH — Jakub Bir · Izolacje natryskowe pianą PUR · tel. 536 899 440 · ul. Parkowa 12/12, 83-300 Kartuzy</footer>
+<script>window.onload=()=>setTimeout(()=>window.print(),500);<\/script>
+</body></html>`;
+}
+function printOffer() {
+  const order = calculate();
+  const popup = window.open("", "_blank");
+  if (!popup) {
+    alert("Przeglądarka zablokowała okno. Zezwól na wyskakujące okna i spróbuj ponownie.");
+    return;
+  }
+  popup.document.open();
+  popup.document.write(offerHTML(order));
+  popup.document.close();
+}
+function messageText(order) {
+  return `Dzień dobry${order.customer ? " " + order.customer : ""}, przesyłam ofertę BIRTECH na izolację pianą PUR. Zakres: ${order.scope}. Produkt: ${order.product}. Powierzchnia: ${order.area} m², grubość: ${order.thickness} cm. Cena brutto: ${money(order.gross)}. Oferta ważna 14 dni. BIRTECH — Izolacje natryskowe pianą PUR, tel. 536 899 440.`;
+}
+function share(type) {
+  const order = calculate();
+  const message = messageText(order);
+  if (type === "email") {
+    location.href = `mailto:${encodeURIComponent(order.email || "")}?subject=${encodeURIComponent("Oferta BIRTECH — izolacja PUR")}&body=${encodeURIComponent(message + "\n\nPełną ofertę PDF zapisz przyciskiem „Zapisz / udostępnij PDF” i dołącz do wiadomości.")}`;
+  } else if (type === "whatsapp") {
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank");
+  } else if (type === "sms") {
+    location.href = `sms:?&body=${encodeURIComponent(message)}`;
+  }
+}
+function exportOrders() {
+  const blob = new Blob([JSON.stringify(load(), null, 2)], {
+    type: "application/json"
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "birtech-zlecenia.json";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+document.querySelectorAll("[data-tab]").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll("[data-tab]").forEach(b => b.classList.remove("active"));
+    button.classList.add("active");
+    $("calc").classList.toggle("hidden", button.dataset.tab !== "calc");
+    $("orders").classList.toggle("hidden", button.dataset.tab !== "orders");
+  });
+});
+$("form").addEventListener("submit", event => {
+  event.preventDefault();
+  saveOrder();
+});
+["area", "thickness", "price", "vat", "material", "labor", "fuel", "other", "foam", "scope"].forEach(id => {
+  $(id)?.addEventListener("input", calculate);
+  $(id)?.addEventListener("change", calculate);
+});
+$("print").addEventListener("click", printOffer);
+$("emailSend").addEventListener("click", () => share("email"));
+$("whatsappSend").addEventListener("click", () => share("whatsapp"));
+$("smsSend").addEventListener("click", () => share("sms"));
+$("export").addEventListener("click", exportOrders);
+calculate();
+renderOrders();
